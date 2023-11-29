@@ -10,7 +10,15 @@ class NameDrawer {
     'Jeff',
     'Richard',
     'Susan',
-  ];
+  ].map((str) => str.toLowerCase());
+
+  static NOT_PERMITTED = {
+    steve: ['karen'],
+    karen: ['steve'],
+    susan: ['isaac', 'lucia'],
+    richard: ['jeff'],
+    jeff: ['richard'],
+  };
 
   constructor(args) {
     this.#results = {};
@@ -20,7 +28,7 @@ class NameDrawer {
     } else {
       this.#args =
         process.argv.slice(2).length > 0
-          ? process.argv.slice(2)
+          ? process.argv.slice(2).map((str) => str.toLowerCase())
           : NameDrawer.DEFAULTLIST;
     }
   }
@@ -35,6 +43,20 @@ class NameDrawer {
 
     for (let i = 0; i < length; i++) {
       this.#results[shuffledList[i]] = shuffledList[(i + 1) % length];
+    }
+
+    for (const [person, forbiddenSelections] of Object.entries(
+      NameDrawer.NOT_PERMITTED
+    )) {
+      if (forbiddenSelections.includes(this.#results[person])) {
+        this.#results = {};
+        console.log(
+          `${person} cannot draw to ${forbiddenSelections.join(
+            ', '
+          )}. Re-assigning...`.toUpperCase()
+        );
+        return this.assignNames();
+      }
     }
     return this;
   }
@@ -58,5 +80,4 @@ class NameDrawer {
   }
 }
 const newNameDrawer = new NameDrawer();
-newNameDrawer.assignNames()?.toString()
-
+newNameDrawer.assignNames()?.toString();
