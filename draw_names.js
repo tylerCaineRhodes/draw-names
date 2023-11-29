@@ -43,18 +43,14 @@ class NameDrawer {
 
     for (let i = 0; i < length; i++) {
       this.#results[shuffledList[i]] = shuffledList[(i + 1) % length];
-    }
-
-    for (const [person, forbiddenSelections] of Object.entries(
-      NameDrawer.NOT_PERMITTED
-    )) {
-      if (forbiddenSelections.includes(this.#results[person])) {
-        this.#results = {};
+      const forbiddenSelections = NameDrawer.NOT_PERMITTED[shuffledList[i]];
+      if (forbiddenSelections?.includes(this.#results[shuffledList[i]])) {
         console.log(
-          `${person} cannot draw to ${forbiddenSelections.join(
+          `${shuffledList[i]} cannot draw ${forbiddenSelections.join(
             ', '
           )}. Re-assigning...`.toUpperCase()
         );
+        this.#results = {};
         return this.assignNames();
       }
     }
